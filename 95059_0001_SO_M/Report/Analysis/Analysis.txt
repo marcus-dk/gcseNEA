@@ -1,0 +1,61 @@
+Analysis:
+This is the analysis section of Marcus Sorensen. GCSE NEA 2021
+
+Introduction:
+  To be able to receive information from a parent and from that information be able to allocate a 
+  time slot for their meeting with the teacher we need to program that can do this for us. The problem
+  consists of receiving information from a user, processing it, and then storing this information again
+  after the program has allocated the user a time slot.
+
+Key points:
+  Use a file to store the allocated appointments for each student persistently, it must be able to store information
+  for a class of 24 pupils, three days - nine students a day.
+
+  Accept input from the parents
+
+  Allocated / Suggest appointments according to the preferences inputted
+
+  Display the complete timetable of appointments, display the individual appointments for parents
+  
+Decomposition:
+  We can break down the problem into 3 distinct sections, these sections are:
+    1. Input
+    2. Logic
+    3. Storage
+
+  These three sections all represent the main parts of the problem. 
+  
+  The first part of the problem is the Input.
+  This includes receiving input from the parents to be able to allocate appointments according to the input.
+  The input also includes the input from the existing data file. This data file will allow the program to decide
+  whether a time slot is free for parents or if the program needs to suggest an alternative.
+
+  The second part of the problem is the Logic.
+  The logic is the part of the program that receives all the information from the input stage and uses this data
+  to calculate the best possible time slot for the parents based of the preferences given. The logic will read the 
+  data from the persistent storage file and from that information suggest the best time slots for the parents to have
+  their meeting.
+
+  The third and last part of the problem is the Storage.
+  The Storage is perhaps the trickiest part of the problem. We need a way for us to store all the free and all the allocated
+  time slots so that when the logic needs to allocate more time slots it knows not to allocate overlapping times. This 
+  storage needs to be efficient and logical to allow for easy code maintenance and ease of use. The method of storage needs
+  to be logical and easily implemented so that the code can be written and maintained easily allowing for better code and 
+  an overall better solution to the problem.
+
+Sub-problems:
+  Firstly, we need to have a way of storing the data about the schedule, this is important as otherwise 
+  the data inputted would not be saved after the user closes the program.
+
+  Secondly, we need to program a way to identify a user, followed by a way to receive preferences about 
+  the time slot from the user. This is necessary so that our program is able to allocate time slots accordingly
+
+  Thirdly, we need to design a function that can take in the information from the user and process it to 
+  be able to allocate the best possible time slot for the user. 
+
+  Lastly, since this program will be used by every set of parents of every student of the school, we need to
+  ensure that the user interface is intuitive and efficient allowing parents to navigate it without issues.
+
+
+
+

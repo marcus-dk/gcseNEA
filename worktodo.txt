@@ -1,0 +1,33 @@
+Outline:
+  Create an elegant solution to brief two. Create a robust and efficient
+  program that provides intuitive UI, all wanted features and can be easily 
+  implemented.
+
+Todo: 
+  1. Fix Bugs and Mistakes
+  2. Setup Timetable Output Function
+  3. Setup Individual Timetable Times Display
+
+Extra Ideas:
+  1. Twin System
+  2. Cancellation / Reallocation System 
+  3. Website / GUI Setup (Low Priority)
+
+Working On:
+> Cancellation and Reallocation
+
+Finished:
+  1. worktodo.txt created and completed
+  2. Setup JSON File
+  3. Create Barebone Class / Function Structure
+  4. Setup JSON Read Function
+  5. Setup Main Menu Function
+  6. Setup Input Function
+  7. Setup JSON Dump Function
+  8. Create Rules for Appointment Allocation
+  9. Create Logic for Allocation of Timetable / Alternate Options
+  10. Fixed Initial Bugs and Issues
+  11.
+  12.
+  13.
+  
