@@ -1,6 +1,6 @@
 # GCSE NEA 2021, code written by: Marcus Sorensen
 # Github Repository: https://github.com/marcus-dk/gcseNEA
-
+ 
 # Importing Necessary Libraries and Files
 import json
 import timeallocation as ta
@@ -33,7 +33,7 @@ class SchedulingProgram:
   # Gets us the time preferences of appointment
   def timeinput(self, parentID, times, jsondata):
     duplicate = ta.duplicate(jsondata, parentID)
-    if duplicate == 1:
+    if duplicate == True:
       print("You have already reserved a meeting time.\nYou can not reserve another slot. If you wish to change your time you can cancel your time and then reserve a new one.")
       self.mainmenu(parentID, times, jsondata)
 
@@ -48,11 +48,11 @@ class SchedulingProgram:
       self.inputdata = [self.daypref, self.slotpref]
 
       while 1:
-        if self.daypref and self.slotpref:
+        if (self.daypref in ["1","2","3"]) and (self.slotpref in ["slot1","slot2","slot3","slot4","slot5","slot6","slot7","slot8","slot9"]):
           
           if (self.daypref in ["1", "2", "3"]) and (self.slotpref in times):
             self.daypref = int(self.daypref) - 1
-            available = ta.checkavailability(jsondata, self.inputdata)
+            available = ta.checkavailability(jsondata, self.inputdata, parentID)
 
             if available == 0:
               self.mainmenu(parentID, times, jsondata)
@@ -77,12 +77,18 @@ class SchedulingProgram:
   def mainmenu(self, parentID, times, jsondata):
 
     print(f"\nWelcome {parentID}, what are you looking to do?")
-    self.choice = input("[1] Reserve a time for your meeting with your child's teacher\n[2] Change your existing meeting time\n[3] Cancel your existing meeting\n[4] View your time\n1,2,3,4: ")
-
+    if parentID != "admin":
+      self.choice = input("[1] Reserve a time for your meeting with your child's teacher\n[2] Change your existing meeting time\n[3] Cancel your existing meeting\n[4] View your time\n1,2,3,4: ")
+    else: 
+      self.choice = input("[1] Reserve a time for your meeting with your child's teacher\n[2] Change your existing meeting time\n[3] Cancel your existing meeting\n[4] View your time\n [5] View the entire timetable\n1,2,3,4,5: ")
     print(f"You have chosen {self.choice}, you will be redirected...\n\n")
 
     while 1: 
       if self.choice:
+
+        if parentID == "admin":
+          if self.choice == "5":
+            " print entire timetable "
 
         if self.choice == "1":
           self.timeinput(parentID, times, jsondata)
