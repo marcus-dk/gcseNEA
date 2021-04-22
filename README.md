@@ -5,4 +5,4 @@
 
 dependencies: python 3.7+
 
-Code was written in 3 hours. NEA is meant to be completed in 50 total. Please excuse the shitty code. It get the work done :D
+Code was written in 3 hours. NEA is meant to be completed in 50 total. Please excuse the shitty code. It gets the work done :D
