@@ -20,20 +20,11 @@ class SchedulingProgram:
       json.dump(jsondata, file, sort_keys=True, indent=2) 
     
 
-
-  # Function uses timeallocation.py to
-  # determine allocated time slots
-  def timeallocation(self):
-
-    # checkavailability - if available - timeallocation
-    pass
-
-
   # Simple Data Input
   # Gets us the time preferences of appointment
   def timeinput(self, parentID, times, jsondata):
     duplicate = ta.duplicate(jsondata, parentID)
-    if duplicate == True:
+    if duplicate != False:
       print("You have already reserved a meeting time.\nYou can not reserve another slot. If you wish to change your time you can cancel your time and then reserve a new one.")
       self.mainmenu(parentID, times, jsondata)
 
@@ -78,40 +69,45 @@ class SchedulingProgram:
 
     print(f"\nWelcome {parentID}, what are you looking to do?")
     if parentID != "admin":
-      self.choice = input("[1] Reserve a time for your meeting with your child's teacher\n[2] Change your existing meeting time\n[3] Cancel your existing meeting\n[4] View your time\n1,2,3,4: ")
+      self.choice = input("[1] Reserve a time for your meeting with your child's teacher\n[2] Cancel your existing meeting\n[3] View your time\n1,2,3: ")
     else: 
-      self.choice = input("[1] Reserve a time for your meeting with your child's teacher\n[2] Change your existing meeting time\n[3] Cancel your existing meeting\n[4] View your time\n [5] View the entire timetable\n1,2,3,4,5: ")
+      self.choice = input("[1] Reserve a time for your meeting with your child's teacher\n[2] Cancel your existing meeting\n[3] View your time\n[4] View the entire timetable\n1,2,3,4: ")
     print(f"You have chosen {self.choice}, you will be redirected...\n\n")
 
     while 1: 
       if self.choice:
+        print(parentID, self.choice)
+        if parentID == "admin": # admin print all timetable
+          if self.choice == "4":
+            ta.printtimetable(jsondata, parentID)
+            self.mainmenu(parentID, times, jsondata)
 
-        if parentID == "admin":
-          if self.choice == "5":
-            " print entire timetable "
-
-        if self.choice == "1":
+        if self.choice == "1": # allocate time
           self.timeinput(parentID, times, jsondata)
+          
+        elif self.choice == "2": # cancel time
+          x = ta.canceltime(jsondata,parentID)
+          if x == False:
+            self.mainmenu(parentID, times, jsondata)
+          else:
+            self.jsonClose(jsondata)
+            self.mainmenu(parentID, times, jsondata)
 
-        elif self.choice == "2":
-          # Reallocation Function
-          break
-
-        elif self.choice == "3":
-          # Cancel Function
-          break
-
-        elif self.choice == "4":
-          # Timetable View function
-          break
+        elif self.choice == "3": # prints singular time
+          x = ta.showtime(jsondata, parentID)
+          if x == False:
+            print("You do not have a time, therefore there is nothing to show")
+            self.mainmenu(parentID, times, jsondata)
+          else:
+            self.mainmenu(parentID, times, jsondata)
 
         else:
           print("You have inputted an invalid response, please try again")
-          break
+          quit()
 
       else:
         print("You have inputted an invalid response, please try again")
-        break
+        quit()
 
 
   # "Login System" for parents, asks for ID in the specified format
