@@ -3,11 +3,16 @@
 # Class checks if parentID already has an allocated time slot
 def duplicate(jsondata, parentID):
   dupe = False
+  x = 0
+  y = 0
   for day, slots in jsondata.items():
-    for slot, list in slots.items():
-      if list[1] == parentID:
-        return True
-      elif list[1] != parentID:
+    x += 1
+    for slot, lists in slots.items():
+      y += 1
+      if lists[1] == parentID:
+        location = [day,slots,x,y,slot]
+        return location
+      elif lists[1] != parentID:
         continue
       else:
         print("An error has occurred")
@@ -58,27 +63,44 @@ def allocatetime(jsondata, inputdata, parentID):
   return jsondata
 
 # calls duplication - if True we delete  
-def canceltime(jsondata, inputdata, parentID):
+def canceltime(jsondata, parentID):
   dupe = duplicate(jsondata, parentID)
-  if dupe == True:
-    # find and delete
-    return True
+
+  if dupe != False:
+    day = dupe[0]
+    slot = dupe[-1]
+    daydata = jsondata[day]
+    allocateindicator = daydata[slot]
+    allocateindicator[0] = "0"
+    allocateindicator[1] = ""
+    daydata[slot] = allocateindicator
+    jsondata[day] = daydata
+
   else: 
     print("You do not have a meeting appointment, therefore there is nothing to cancel.")
     return False
 
 # calls cancel - calls allocation
-def reallocatetime(jsondata, inputdata, parentID):
-  pass
+"""def reallocatetime(jsondata, inputdata, parentID):
+  x = canceltime(jsondata, parentID)
+  if x == False:
+    return x
+  jsondata = allocatetime(jsondata, inputdata, parentID)
+  return jsondata"""
 
 # looks for time - prints
 def showtime(jsondata, parentID):
-  pass
+  location = duplicate(jsondata, parentID)
+  if location == False:
+    return False
+  else:
+    print(f"Your appointment is on day {location[2]}, during {location[-1]} under the name {parentID}")
+    return True
 
 # checks parentID - if authorised, prints full json
 def printtimetable(jsondata, parentID):
   if parentID == "admin":
     for day, slots in jsondata.items():
-      print(slots)
+      print(f"{day}:")
       for slot, list in slots.items():
-        print(slot, list)
+        print(f"\t{slot}: {list}")
