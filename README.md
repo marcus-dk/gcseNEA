@@ -1,8 +1,8 @@
 # My 2021 GCSE NEA
-written by: Marcus Sorensen (marcusS)
+##written by: Marcus Sorensen (marcusS)
 
-chosen brief: 2 - Parent's Evening
+###chosen brief: 2 - Parent's Evening
 
 dependencies: python 3.7+
 
-NOTE: make sure to remove test123 and change 1 to 0, it's there to show what it will look like
+Code was written in 3 hours. NEA is meant to be completed in 50 total. Please excuse the shitty code. It get the work done :D
