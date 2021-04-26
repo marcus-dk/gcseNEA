@@ -80,13 +80,6 @@ def canceltime(jsondata, parentID):
     print("You do not have a meeting appointment, therefore there is nothing to cancel.")
     return False
 
-# calls cancel - calls allocation
-"""def reallocatetime(jsondata, inputdata, parentID):
-  x = canceltime(jsondata, parentID)
-  if x == False:
-    return x
-  jsondata = allocatetime(jsondata, inputdata, parentID)
-  return jsondata"""
 
 # looks for time - prints
 def showtime(jsondata, parentID):
