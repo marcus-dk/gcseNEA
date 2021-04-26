@@ -76,7 +76,6 @@ class SchedulingProgram:
 
     while 1: 
       if self.choice:
-        print(parentID, self.choice)
         if parentID == "admin": # admin print all timetable
           if self.choice == "4":
             ta.printtimetable(jsondata, parentID)
@@ -90,6 +89,7 @@ class SchedulingProgram:
           if x == False:
             self.mainmenu(parentID, times, jsondata)
           else:
+            print("Your appointment has been cancelled. ")
             self.jsonClose(jsondata)
             self.mainmenu(parentID, times, jsondata)
 
