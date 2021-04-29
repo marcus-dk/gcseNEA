@@ -1,0 +1,245 @@
+# Separate File for Time Allocation Logic
+
+
+
+# Class checks if parentID already has an allocated time slot
+
+FUNCTION duplicate(jsondata, parentID)
+
+BEGIN FUNCTION
+
+	SET dupe  TO  FALSE
+
+	SET x  TO  0
+
+	SET y  TO  0
+
+	FOR EACH day, slots  FROM  jsondata.items() DO
+
+		SET x  TO  x +  1
+
+		FOR EACH slot, lists  FROM  slots.items() DO
+
+			SET y  TO  y +  1
+
+			IF lists[1]  =  parentID THEN
+
+				SET location  TO  [day,slots,x,y,slot]
+
+				RETURN location
+
+			ELSEIF lists[1]  <>  parentID THEN
+
+				CONTINUE
+
+			ELSE
+
+				SEND "An error has occurred" TO DISPLAY 
+
+				quit()
+
+			END IF
+
+		END FOREACH
+
+	END FOREACH
+
+	RETURN FALSE
+
+
+
+# Class checks through JSON data and sees if inputted 
+
+# preferences collide with previously inputted data.
+
+
+
+END FUNCTION
+
+FUNCTION checkavailability(jsondata, inputdata, parentID)
+
+BEGIN FUNCTION
+
+	SET dupe  TO  duplicate(jsondata, parentID)
+
+	IF dupe  =  FALSE THEN
+
+		SET day  TO  "day"+inputdata[0]
+
+		SET slot  TO  inputdata[1]
+
+		TRY
+
+			SET daydata  TO  jsondata[day]
+
+			SET slotdata  TO  daydata[slot]
+
+
+
+		EXCEPT KeyError
+
+			SEND "You have inputted your preferences in an incorrect format, please try again." TO DISPLAY 
+
+			RETURN 0
+
+
+
+		END TRY
+
+		IF slotdata[0]  =  "0" THEN
+
+			SET available  TO  TRUE
+
+		ELSEIF slotdata[0]  =  "1" THEN 
+
+			SET available  TO  FALSE
+
+		ELSE
+
+			SEND "An error has occurred." TO DISPLAY 
+
+			quit()
+
+		
+
+		END IF
+
+		RETURN available
+
+	ELSE 
+
+		SEND "You already have a time reserved, cancel this time first" TO DISPLAY 
+
+
+
+# Class is called after checkavailability, uses logic created by me
+
+# to decide best time if preferences not available and returns result, 
+
+# or allocates preferred time if slot is available and returns result. 
+
+	END IF
+
+END FUNCTION
+
+FUNCTION allocatetime(jsondata, inputdata, parentID)
+
+BEGIN FUNCTION
+
+	SET day  TO  "day"+inputdata[0]
+
+	SET slot  TO  inputdata[1]
+
+	SET daydata  TO  jsondata[day]
+
+	SET allocateindicator  TO  daydata[slot]
+
+	allocateindicator[0]  TO  "1"
+
+	allocateindicator[1]  TO  parentID 
+
+	daydata[slot]  TO  allocateindicator
+
+	jsondata[day]  TO  daydata
+
+
+
+	RETURN jsondata
+
+
+
+# calls duplication - if True we delete	
+
+END FUNCTION
+
+FUNCTION canceltime(jsondata, parentID)
+
+BEGIN FUNCTION
+
+	SET dupe  TO  duplicate(jsondata, parentID)
+
+
+
+	IF dupe  <>  FALSE THEN
+
+		SET day  TO  dupe[0]
+
+		SET slot  TO  dupe[-1]
+
+		SET daydata  TO  jsondata[day]
+
+		SET allocateindicator  TO  daydata[slot]
+
+		allocateindicator[0]  TO  "0"
+
+		allocateindicator[1]  TO  ""
+
+		daydata[slot]  TO  allocateindicator
+
+		jsondata[day]  TO  daydata
+
+
+
+	ELSE 
+
+		SEND "You do not have a meeting appointment, therefore there is nothing to cancel." TO DISPLAY 
+
+		RETURN FALSE
+
+
+
+
+
+# looks for time - prints
+
+	END IF
+
+END FUNCTION
+
+FUNCTION showtime(jsondata, parentID)
+
+BEGIN FUNCTION
+
+	SET location  TO  duplicate(jsondata, parentID)
+
+	IF location  =  FALSE THEN
+
+		RETURN FALSE
+
+	ELSE
+
+		SEND f"Your appointment is on day {location[2]}, during {location[-1]} under the name {parentID}" TO DISPLAY 
+
+		RETURN TRUE
+
+
+
+# checks parentID - if authorised, prints full json
+
+	END IF
+
+END FUNCTION
+
+PROCEDURE printtimetable(jsondata, parentID)
+
+BEGIN PROCEDURE
+
+	IF parentID  =  "admin" THEN
+
+		FOR EACH day, slots  FROM  jsondata.items() DO
+
+			SEND f"{day}:" TO DISPLAY 
+
+			FOR EACH slot, ARRAY  FROM  slots.items() DO
+
+				SEND f"\t{slot}: {list}" TO DISPLAY 
+
+			END FOREACH
+
+		END FOREACH
+
+	END IF
+
+END PROCEDURE
+
+ 

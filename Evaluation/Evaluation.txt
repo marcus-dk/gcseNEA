@@ -1,0 +1,56 @@
+Evaluation Stage
+
+The GCSE NEA brief has been planned, implemented and tested and the code is now complete. 
+
+From Analysis:
+  Key points:
+  Use a file to store the allocated appointments for each student persistently, it must be able to store information
+  for a class of 24 pupils, three days - nine students a day.
+
+  Accept input from the parents
+
+  Allocate appointments according to the preferences inputted
+
+  Display the complete timetable of appointments, display the individual appointments for parents
+
+Checklist of Goals completed: 
+  Goal 1: Use a file to save the appointments of each student persistently | Completed?: Yes
+  Goal 2: The file must store 24 pupils worth of data, 3 days - nine students a day | Completed?: Yes
+  Goal 3: Accept input from parents | Completed?: Yes
+  Goal 4: Allocate appointments according to the preferences inputted | Completed?: Yes
+  Goal 5: Display the complete timetable of appointments, display the individual appointments for parents | Completed?: Yes
+
+Breakdown of successes:
+  Goal 1: 
+          Initially I knew that I wanted to store data in a JSON file. This is due to JSON's amazing compatibility with Python. When parsing JSON 
+          the JSON object(s) is parsed into a python data type, in my case a dictionary
+          This means that I could store the appointments of parents and access them quickly and easily
+
+  Goal 2: 
+          This was quite simple. I played around a bit with how I wanted my JSON data to be stored but in the end I decided on creating a large
+          dictionary containing further 3 dictionaries (1 per day) and storing within these 3 dictionaries the data of each slot
+
+  Goal 3: 
+          I decided that the most important thing was the simplicity of the input as to make it easier for parents to use the program without issues.
+          Therefore I decided to minimise the amount of input required and tried to make the code do most of the work itself. This also in the end 
+          meant less inputs to check for errors.
+
+  Goal 4:
+          This was somewhat finicky due to how I wrote the code. However, I decided to try to work around any errors during development rather than 
+          having to rewrite large chunks of code during testing. This means that the code is very difficult to break (I haven't managed). 
+          The logic used to allocate an appointment is quite simple. I first receive the input data from the user. Then proceed to check for 
+          whether the slot is available and then whether the parent already has an appointment made. This means that there can not be any duplicate
+          appointments or appointments overwriting other appoinments. Lastly, if all checks pass I allocate the time to the parent and write the new
+          time into the JSON file.
+
+  Goal 5: 
+          I decided to change this goal slightly during development. I personally thought that parents should not be able to view other parents appointments
+          for privacy reasons. However, I then decided instead to implement a feature where if the parentID entered is "admin" a new option appears 
+          to print the entire timetable. This means that admins can print the timetable for teachers but parents can only view there own times. 
+
+Conclusion:
+  I feel that I have successfully completed the NEA implementing everything that was necessary and asked for in the brief that I chose. 
+  I have completed a program that allows for the scheduling of parents appointments with persistent data storage, error checking, 
+  support for up to 24 pupils, cancellation of appointments, and the option to view ones appointment and as an admin to view the entire
+  timetable. 
+

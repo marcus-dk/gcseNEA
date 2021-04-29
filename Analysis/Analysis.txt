@@ -13,7 +13,7 @@ Key points:
 
   Accept input from the parents
 
-  Allocated / Suggest appointments according to the preferences inputted
+  Allocate appointments according to the preferences inputted
 
   Display the complete timetable of appointments, display the individual appointments for parents
   

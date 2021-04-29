@@ -1,6 +1,6 @@
 # GCSE NEA 2021, code written by: Marcus Sorensen
 # Github Repository: https://github.com/marcus-dk/gcseNEA
-
+ 
 # Importing Necessary Libraries and Files
 import json
 import timeallocation as ta
@@ -20,20 +20,11 @@ class SchedulingProgram:
       json.dump(jsondata, file, sort_keys=True, indent=2) 
     
 
-
-  # Function uses timeallocation.py to
-  # determine allocated time slots
-  def timeallocation(self):
-
-    # checkavailability - if available - timeallocation
-    pass
-
-
   # Simple Data Input
   # Gets us the time preferences of appointment
   def timeinput(self, parentID, times, jsondata):
     duplicate = ta.duplicate(jsondata, parentID)
-    if duplicate == 1:
+    if duplicate != False:
       print("You have already reserved a meeting time.\nYou can not reserve another slot. If you wish to change your time you can cancel your time and then reserve a new one.")
       self.mainmenu(parentID, times, jsondata)
 
@@ -48,28 +39,31 @@ class SchedulingProgram:
       self.inputdata = [self.daypref, self.slotpref]
 
       while 1:
-        if self.daypref and self.slotpref:
+        if (self.daypref in ["1","2","3"]) and (self.slotpref in times):
+
+          available = ta.checkslot(self.inputdata, jsondata)
+          if available == False:
+            print("Your slot is already taken, please try again.")
+            quit()
           
-          if (self.daypref in ["1", "2", "3"]) and (self.slotpref in times):
-            self.daypref = int(self.daypref) - 1
-            available = ta.checkavailability(jsondata, self.inputdata)
+          self.daypref = int(self.daypref) - 1
+          available = ta.checkavailability(jsondata, self.inputdata, parentID)
 
-            if available == 0:
-              self.mainmenu(parentID, times, jsondata)
+          if available == 0:
+            self.mainmenu(parentID, times, jsondata)
 
-            elif available == True:
-              jsondata = ta.allocatetime(jsondata, self.inputdata, parentID)
-              print("You have been allocated your meeting.")
-              self.jsonClose(jsondata)
-              self.mainmenu(parentID, time, jsondata)
-            else: 
-              print("Sadly this slot is already occupied. Please enter an alternate time slot. Sorry for any inconvenience")
-              break
-
+          elif available == True:
+            jsondata = ta.allocatetime(jsondata, self.inputdata, parentID)
+            print("You have been allocated your meeting.")
+            self.jsonClose(jsondata)
+            self.mainmenu(parentID, time, jsondata)
+          else: 
+            print("Sadly this slot is already occupied. Please enter an alternate time slot. Sorry for any inconvenience")
+            break
         
-        else:
-          print("You have inputted an invalid response, please try again")
-          break
+      else:
+        print("You have inputted an invalid response, please try again")
+        break
 
 
   # Main Landing Page of Program
@@ -77,35 +71,46 @@ class SchedulingProgram:
   def mainmenu(self, parentID, times, jsondata):
 
     print(f"\nWelcome {parentID}, what are you looking to do?")
-    self.choice = input("[1] Reserve a time for your meeting with your child's teacher\n[2] Change your existing meeting time\n[3] Cancel your existing meeting\n[4] View your time\n1,2,3,4: ")
-
+    if parentID != "admin":
+      self.choice = input("[1] Reserve a time for your meeting with your child's teacher\n[2] Cancel your existing meeting\n[3] View your time\n1,2,3: ")
+    else: 
+      self.choice = input("[1] Reserve a time for your meeting with your child's teacher\n[2] Cancel your existing meeting\n[3] View your time\n[4] View the entire timetable\n1,2,3,4: ")
     print(f"You have chosen {self.choice}, you will be redirected...\n\n")
 
     while 1: 
       if self.choice:
+        if parentID == "admin": # admin print all timetable
+          if self.choice == "4":
+            ta.printtimetable(jsondata, parentID)
+            self.mainmenu(parentID, times, jsondata)
 
-        if self.choice == "1":
+        if self.choice == "1": # allocate time
           self.timeinput(parentID, times, jsondata)
+          
+        elif self.choice == "2": # cancel time
+          x = ta.canceltime(jsondata,parentID)
+          if x == False:
+            self.mainmenu(parentID, times, jsondata)
+          else:
+            print("Your appointment has been cancelled. ")
+            self.jsonClose(jsondata)
+            self.mainmenu(parentID, times, jsondata)
 
-        elif self.choice == "2":
-          # Reallocation Function
-          break
-
-        elif self.choice == "3":
-          # Cancel Function
-          break
-
-        elif self.choice == "4":
-          # Timetable View function
-          break
+        elif self.choice == "3": # prints singular time
+          x = ta.showtime(jsondata, parentID)
+          if x == False:
+            print("You do not have a time, therefore there is nothing to show")
+            self.mainmenu(parentID, times, jsondata)
+          else:
+            self.mainmenu(parentID, times, jsondata)
 
         else:
           print("You have inputted an invalid response, please try again")
-          break
+          quit()
 
       else:
         print("You have inputted an invalid response, please try again")
-        break
+        quit()
 
 
   # "Login System" for parents, asks for ID in the specified format
@@ -113,8 +118,11 @@ class SchedulingProgram:
 
     print("This is the Scheduling System for the upcoming Parents Evening")
     self.parentID = input("Please enter your parentID: ")
-
-    self.mainmenu(self.parentID, times, jsondata)
+    if self.parentID:
+      self.mainmenu(self.parentID, times, jsondata)
+    else: 
+      print("You have entered erroneous data, please try again")
+      quit()
 
 
   def __init__(self):

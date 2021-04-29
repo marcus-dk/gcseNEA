@@ -1,0 +1,20 @@
+Testing Stage of NEA development
+Final Implementation is complete and now I need to find any possible bugs 
+
+I will be testing all examples of user input and inputting: expected input, erroneous input, and edge cases
+
+Testing Table:
+
+  Test # | Test Name | Valid, Invalid, Edge Input | Valid, Invalid, Edge Output | Solution if needed
+    / = Correct Output, X = Incorrect Output
+
+    Test 1: parentID input stage | parent123, , n/a | /, X, /| Implemented a check if parentID exists 
+    Test 2: Option choice | 2, 6, 3 | /, /, / | n/a
+    Test 3: Day choice | 2, a, 3 | /, /, / | n/a
+    Test 4: Time slot choice | slot5, 4, slot9 | /, X, / | Implemented a check if slot choice is a valid option
+    Test 5: Choosing already taken slot | n/a, n/a, n/a | X | Implemented new function to check if slot is taken 
+
+  These are all occurences of User input, after error checks have been implemented there are no longer any errors to be found
+
+
+

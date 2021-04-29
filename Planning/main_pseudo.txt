@@ -1,0 +1,343 @@
+# GCSE NEA 2021, code written by: Marcus Sorensen
+
+# Github Repository: https://github.com/marcus-dk/gcseNEA
+
+ 
+
+# Importing Necessary Libraries and Files
+
+IMPORT json
+
+IMPORT timeallocation as ta
+
+
+
+
+
+# Main Class for Parent's Evening Scheduling System
+
+DEFINE CLASS SchedulingProgram
+
+
+
+	# JSON related functions allowing for loading and dumping of data
+
+	FUNCTION jsonOpen(self, jsonfile TO "timetable.json")
+
+	BEGIN FUNCTION
+
+		with open(jsonfile) as file:
+
+			SET jsondata  TO  json.load(file)
+
+		RETURN jsondata
+
+
+
+	END FUNCTION
+
+	PROCEDURE jsonClose(self, jsondata, jsonfile TO "timetable.json")
+
+	BEGIN PROCEDURE
+
+		with open(jsonfile, "w") as file:
+
+			json.dump(jsondata, file, sort_keys TO TRUE, indent TO 2) 
+
+		
+
+
+
+	# Simple Data Input
+
+	# Gets us the time preferences of appointment
+
+	END PROCEDURE
+
+	PROCEDURE timeinput(self, parentID, times, jsondata)
+
+	BEGIN PROCEDURE
+
+		SET duplicate  TO  ta.duplicate(jsondata, parentID)
+
+		IF duplicate  <>  FALSE THEN
+
+			SEND "You have already reserved a meeting time.\nYou can not reserve another slot. If you wish to change your time you can cancel your time and then reserve a new one." TO DISPLAY 
+
+			self.mainmenu(parentID, times, jsondata)
+
+
+
+		END IF
+
+		SEND "To be allocated a time slot for your meeting you must input your preferences regarding what day and slot you'd like to have the meeting.\nPlease do so below" TO DISPLAY 
+
+
+
+		FOR EACH slot, time  FROM  times.items() DO
+
+			SEND slot,"="+"\t"+time[0]+" - "+time[1] TO DISPLAY 
+
+		
+
+		END FOREACH
+
+		WHILE 1 DO
+
+			SEND "What day would you prefer to have your meeting? Day [1],[2], or [3]: " TO DISPLAY
+			RECEIVE self.daypref FROM(STRING)KEYBOARD
+			SEND "What time slot would you prefer to reserve? [Enter as shown above (ex. slot2)]: " TO DISPLAY
+			RECEIVE self.slotpref FROM(STRING)KEYBOARD
+			SET self.inputdata  TO  [self.daypref, self.slotpref]
+
+
+
+			WHILE 1 DO
+
+				IF (self.daypref IN ["1","2","3"]) AND (self.slotpref IN ["slot1","slot2","slot3","slot4","slot5","slot6","slot7","slot8","slot9"]) THEN
+
+					
+
+					IF (self.daypref IN ["1", "2", "3"]) AND (self.slotpref IN times) THEN
+
+						SET self.daypref  TO  INTEGER(self.daypref) - 1
+
+						SET available  TO  ta.checkavailability(jsondata, self.inputdata, parentID)
+
+
+
+						IF available  =  0 THEN
+
+							self.mainmenu(parentID, times, jsondata)
+
+
+
+						ELSEIF available  =  TRUE THEN
+
+							SET jsondata  TO  ta.allocatetime(jsondata, self.inputdata, parentID)
+
+							SEND "You have been allocated your meeting." TO DISPLAY 
+
+							self.jsonClose(jsondata)
+
+							self.mainmenu(parentID, time, jsondata)
+
+						ELSE 
+
+							SEND "Sadly this slot is already occupied. Please enter an alternate time slot. Sorry for any inconvenience" TO DISPLAY 
+
+							BREAK
+
+
+
+						END IF
+
+					END IF
+
+				
+
+				ELSE
+
+					SEND "You have inputted an invalid response, please try again" TO DISPLAY 
+
+					BREAK
+
+
+
+
+
+	# Main Landing Page of Program
+
+	# Allows user to navigate the program
+
+				END IF
+
+			END WHILE
+
+		END WHILE
+
+	END PROCEDURE
+
+	PROCEDURE mainmenu(self, parentID, times, jsondata)
+
+	BEGIN PROCEDURE
+
+
+
+		SEND f"\nWelcome {parentID}, what are you looking to do?" TO DISPLAY 
+
+		IF parentID  <>  "admin" THEN
+
+			SEND "[1] Reserve a time for your meeting with your child's teacher\n[2] Cancel your existing meeting\n[3] View your time\n1,2,3: " TO DISPLAY
+			RECEIVE self.choice FROM(STRING)KEYBOARD
+		ELSE 
+
+			SEND "[1] Reserve a time for your meeting with your child's teacher\n[2] Cancel your existing meeting\n[3] View your time\n[4] View the entire timetable\n1,2,3,4: " TO DISPLAY
+			RECEIVE self.choice FROM(STRING)KEYBOARD
+		END IF
+
+		SEND f"You have chosen {self.choice}, you will be redirected...\n\n" TO DISPLAY 
+
+
+
+		WHILE 1 DO 
+
+			IF self.choice THEN
+
+				IF parentID  =  "admin" THEN # admin print all timetable
+
+					IF self.choice  =  "4" THEN
+
+						ta.printtimetable(jsondata, parentID)
+
+						self.mainmenu(parentID, times, jsondata)
+
+
+
+					END IF
+
+				END IF
+
+				IF self.choice  =  "1" THEN # allocate time
+
+					self.timeinput(parentID, times, jsondata)
+
+					
+
+				ELSEIF self.choice  =  "2" THEN # cancel time
+
+					SET x  TO  ta.canceltime(jsondata,parentID)
+
+					IF x  =  FALSE THEN
+
+						self.mainmenu(parentID, times, jsondata)
+
+					ELSE
+
+						SEND "Your appointment has been cancelled. " TO DISPLAY 
+
+						self.jsonClose(jsondata)
+
+						self.mainmenu(parentID, times, jsondata)
+
+
+
+					END IF
+
+				ELSEIF self.choice  =  "3" THEN # prints singular time
+
+					SET x  TO  ta.showtime(jsondata, parentID)
+
+					IF x  =  FALSE THEN
+
+						SEND "You do not have a time, therefore there is nothing to show" TO DISPLAY 
+
+						self.mainmenu(parentID, times, jsondata)
+
+					ELSE
+
+						self.mainmenu(parentID, times, jsondata)
+
+
+
+					END IF
+
+				ELSE
+
+					SEND "You have inputted an invalid response, please try again" TO DISPLAY 
+
+					quit()
+
+
+
+				END IF
+
+			ELSE
+
+				SEND "You have inputted an invalid response, please try again" TO DISPLAY 
+
+				quit()
+
+
+
+
+
+	# "Login System" for parents, asks for ID in the specified format
+
+			END IF
+
+		END WHILE
+
+	END PROCEDURE
+
+	PROCEDURE landingpage(self, times, jsondata)
+
+	BEGIN PROCEDURE
+
+
+
+		SEND "This is the Scheduling System for the upcoming Parents Evening" TO DISPLAY 
+
+		SEND "Please enter your parentID: " TO DISPLAY
+		RECEIVE self.parentID FROM(STRING)KEYBOARD
+
+
+		self.mainmenu(self.parentID, times, jsondata)
+
+
+
+
+
+	END PROCEDURE
+
+	PROCEDURE __init__(self)
+
+	BEGIN PROCEDURE
+
+
+
+		# Gives us the times slots in an 
+
+		# accessible manner
+
+		SET self.times  TO  {
+
+			"slot1": ["5:00","5:20"],
+
+			"slot2": ["5:20","5:40"],
+
+			"slot3": ["5:40","6:00"],
+
+			"slot4": ["6:00","6:20"],
+
+			"slot5": ["6:20","6:40"],
+
+			"slot6": ["6:40","7:00"],
+
+			"slot7": ["7:00","7:20"],
+
+			"slot8": ["7:20","7:40"],
+
+			"slot9": ["7:40","8:00"]
+
+			}
+
+
+
+		SET self.jsondata  TO  self.jsonOpen()
+
+
+
+		self.landingpage(self.times, self.jsondata)
+
+
+
+SEND "The following code is written by Marcus Sorensen.\nIt is written in February 2021 as part of his GCSE NEA for Computer Science\n\n" TO DISPLAY 
+
+	END PROCEDURE
+
+END CLASS
+
+SET run_SchedulingProgram  TO  SchedulingProgram()
+
+ 
