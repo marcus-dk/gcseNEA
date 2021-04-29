@@ -19,6 +19,8 @@ def duplicate(jsondata, parentID):
         quit()
   return False
 
+# Function Checks if slots chosen is available
+
 def checkslot(inputdata, jsondata):
   availability = True
   x = "day"+inputdata[0]
